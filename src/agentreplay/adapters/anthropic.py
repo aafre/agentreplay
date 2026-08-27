@@ -18,11 +18,13 @@ def _sanitize_for_json(data: Any) -> Any:
     """Recursively convert dataclasses and pydantic models to JSON types."""
     if data is None or isinstance(data, (str, int, float, bool)):
         return data
+    if isinstance(data, type):
+        return getattr(data, "__name__", str(data))
     if isinstance(data, dict):
         return {str(k): _sanitize_for_json(v) for k, v in data.items()}
     if isinstance(data, (list, tuple, set)):
         return [_sanitize_for_json(item) for item in data]
-    if hasattr(data, "model_dump"):
+    if hasattr(data, "model_dump") and callable(getattr(data, "model_dump", None)):
         return _sanitize_for_json(data.model_dump())
     if hasattr(data, "__dataclass_fields__"):
         import dataclasses

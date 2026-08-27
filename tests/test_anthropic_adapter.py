@@ -14,11 +14,14 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-def _make_mock_message(content: str = "Hello from Claude") -> Message:
+def _make_mock_message(
+    content: str = "Hello from Claude",
+    model: str = "claude-3-7-sonnet-latest",
+) -> Message:
     return Message(
         id="msg_test_123",
         content=[TextBlock(text=content, type="text")],
-        model="claude-3-5-sonnet-20241022",
+        model=model,
         role="assistant",
         type="message",
         usage=Usage(input_tokens=10, output_tokens=20),
@@ -29,13 +32,15 @@ def test_anthropic_sync_record_and_replay(tmp_path: Path) -> None:
     cassette_file = tmp_path / "anthropic_sync.jsonl"
 
     mock_client = MagicMock()
-    mock_client.messages.create.return_value = _make_mock_message("Claude response")
+    mock_client.messages.create.return_value = _make_mock_message(
+        "Claude response", model="claude-3-7-sonnet-latest"
+    )
 
     # 1. Record
     wrapped_record = agentreplay.anthropic(mock_client, mode="record", cassette_path=cassette_file)
     with agentreplay.session(mode="record", cassette_path=cassette_file):
         resp = wrapped_record.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-7-sonnet-latest",
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
         )
@@ -54,7 +59,7 @@ def test_anthropic_sync_record_and_replay(tmp_path: Path) -> None:
     )
     with agentreplay.session(mode="replay", cassette_path=cassette_file):
         replay_resp = wrapped_replay.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-7-sonnet-latest",
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
         )
@@ -73,7 +78,7 @@ async def test_anthropic_async_record_and_replay(tmp_path: Path) -> None:
 
     mock_async_client = MagicMock()
     mock_async_client.messages.create = AsyncMock(
-        return_value=_make_mock_message("Async Claude response")
+        return_value=_make_mock_message("Async Claude response", model="claude-3-5-haiku-latest")
     )
 
     # 1. Record
@@ -82,7 +87,7 @@ async def test_anthropic_async_record_and_replay(tmp_path: Path) -> None:
     )
     with agentreplay.session(mode="record", cassette_path=cassette_file):
         resp = await wrapped_record.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-5-haiku-latest",
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
         )
@@ -98,7 +103,7 @@ async def test_anthropic_async_record_and_replay(tmp_path: Path) -> None:
     )
     with agentreplay.session(mode="replay", cassette_path=cassette_file):
         replay_resp = await wrapped_replay.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-5-haiku-latest",
             max_tokens=1024,
             messages=[{"role": "user", "content": "Hello"}],
         )

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pytest-agentreplay"
-version = "0.2.0"
+version = "0.2.1"
 description = "Regression tests for AI agents. Record once, replay offline, catch behavioural regressions."
 readme = "README.md"
 license = "Apache-2.0"

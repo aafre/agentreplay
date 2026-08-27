@@ -44,3 +44,7 @@ htmlcov/
 *~
 .DS_Store
 Thumbs.db
+
+# Planning & Internal Notes
+.plans/
+.plan/

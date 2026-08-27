@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 480" width="100%" height="100%">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap');
+      
+      .bg { fill: #0d1117; }
+      .bar { fill: #161b22; }
+      .border { stroke: #30363d; stroke-width: 1px; fill: none; }
+      .dot-red { fill: #ff5f56; }
+      .dot-yellow { fill: #ffbd2e; }
+      .dot-green { fill: #27c93f; }
+      .title { fill: #8b949e; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 500; }
+      
+      .term-text {
+        font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, Monaco, monospace;
+        font-size: 13.5px;
+        line-height: 22px;
+      }
+      
+      .prompt { fill: #58a6ff; font-weight: 700; }
+      .cmd { fill: #f0f6fc; font-weight: 500; }
+      .success-title { fill: #3fb950; font-weight: 700; }
+      .success-text { fill: #7ee787; }
+      .muted { fill: #8b949e; }
+      .fail-title { fill: #f85149; font-weight: 700; }
+      .diff-del { fill: #ffa198; }
+      .diff-add { fill: #7ee787; }
+      .diff-header { fill: #e3b341; font-weight: 600; }
+      .step-num { fill: #79c0ff; }
+      .time-tag { fill: #d2a8ff; }
+      
+      /* Animation Sequence */
+      @keyframes showPhase1 {
+        0%, 31% { opacity: 1; transform: translateY(0); }
+        34%, 100% { opacity: 0; transform: translateY(-10px); }
+      }
+      @keyframes showPhase2 {
+        0%, 33% { opacity: 0; transform: translateY(10px); }
+        36%, 64% { opacity: 1; transform: translateY(0); }
+        67%, 100% { opacity: 0; transform: translateY(-10px); }
+      }
+      @keyframes showPhase3 {
+        0%, 66% { opacity: 0; transform: translateY(10px); }
+        69%, 97% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-10px); }
+      }
+
+      .phase1 { animation: showPhase1 14s infinite; }
+      .phase2 { animation: showPhase2 14s infinite; }
+      .phase3 { animation: showPhase3 14s infinite; }
+    </style>
+  </defs>
+
+  <!-- Window Container -->
+  <rect class="bg" x="0" y="0" width="850" height="480" rx="10" />
+  <rect class="border" x="0.5" y="0.5" width="849" height="479" rx="10" />
+
+  <!-- Window Header -->
+  <rect class="bar" x="0" y="0" width="850" height="38" rx="10" />
+  <rect class="bar" x="0" y="28" width="850" height="10" />
+  <line x1="0" y1="38" x2="850" y2="38" stroke="#30363d" stroke-width="1" />
+  
+  <!-- Window Dots -->
+  <circle class="dot-red" cx="20" cy="19" r="6" />
+  <circle class="dot-yellow" cx="38" cy="19" r="6" />
+  <circle class="dot-green" cx="56" cy="19" r="6" />
+  <text class="title" x="425" y="24" text-anchor="middle">terminal — pytest --agentreplay</text>
+
+  <!-- Content: Scene 1 - Recording -->
+  <g class="term-text phase1">
+    <text x="25" y="75"><tspan class="prompt">$ </tspan><tspan class="cmd">pytest --agentreplay=record tests/test_support.py</tspan></text>
+    <text x="25" y="115" class="muted">collecting ... collected 1 item</text>
+    
+    <text x="25" y="155" class="success-title">RECORD  </text><text x="95" y="155" class="muted">tests/cassettes/test_support/test_refund_flow.jsonl</text>
+    <text x="25" y="185" class="success-text">  ✓ 2 model request/response cycles recorded</text>
+    <text x="25" y="210" class="success-text">  ✓ 3 tool interactions recorded (lookup_customer, check_policy, refund)</text>
+    <text x="25" y="235" class="success-text">  ✓ Canonical JSONL cassette saved with format_version=1</text>
+    
+    <text x="25" y="285" class="muted">tests/test_support.py::test_refund_flow </text><text x="350" y="285" class="success-title">PASSED</text><text x="420" y="285" class="muted"> [100%]</text>
+    
+    <text x="25" y="335"><tspan class="success-title">====================== 1 passed </tspan><tspan class="muted">in 2.45s (live model calls) ======================</tspan></text>
+    <text x="25" y="380" class="muted"># Cassette committed to Git — ready for offline CI execution</text>
+  </g>
+
+  <!-- Content: Scene 2 - Replaying Offline -->
+  <g class="term-text phase2">
+    <text x="25" y="75"><tspan class="prompt">$ </tspan><tspan class="cmd">pytest --agentreplay=replay tests/test_support.py</tspan></text>
+    <text x="25" y="115" class="muted">collecting ... collected 1 item</text>
+    
+    <text x="25" y="155" class="success-title">REPLAY  </text><text x="95" y="155" class="muted">tests/cassettes/test_support/test_refund_flow.jsonl</text>
+    <text x="25" y="185" class="success-text">  ✓ zero model API calls (intercepted via SkipModelRequest)</text>
+    <text x="25" y="210" class="success-text">  ✓ zero tool/network executions (intercepted via SkipToolExecution)</text>
+    <text x="25" y="235" class="success-text">  ✓ deterministic trajectory matched 100%</text>
+    
+    <text x="25" y="285" class="muted">tests/test_support.py::test_refund_flow </text><text x="350" y="285" class="success-title">PASSED</text><text x="420" y="285" class="muted"> [100%]</text>
+    
+    <text x="25" y="335"><tspan class="success-title">====================== 1 passed </tspan><tspan class="time-tag">in 0.04s </tspan><tspan class="success-title">(offline / 60x faster) ======================</tspan></text>
+    <text x="25" y="380" class="muted"># Safe for CI: zero tokens used, deterministic runtime, zero cost</text>
+  </g>
+
+  <!-- Content: Scene 3 - Behavioral Drift Detected -->
+  <g class="term-text phase3">
+    <text x="25" y="75"><tspan class="prompt">$ </tspan><tspan class="cmd">pytest --agentreplay=replay tests/test_support.py</tspan></text>
+    <text x="25" y="110" class="fail-title">FAILED tests/test_support.py::test_refund_flow - DivergenceError</text>
+    
+    <text x="25" y="145" class="diff-header">Agent trajectory changed</text>
+    
+    <text x="25" y="180" class="muted">Expected:</text>
+    <text x="45" y="205" class="muted">1. model_request → 2. <tspan class="step-num">tool: lookup_customer(id="123")</tspan></text>
+    <text x="45" y="230" class="muted">3. <tspan class="step-num">tool: check_refund_policy(tier="gold")</tspan> → 4. <tspan class="step-num">tool: refund_customer(amount=39)</tspan></text>
+    
+    <text x="25" y="265" class="muted">Actual (Prompt drift skipped policy check):</text>
+    <text x="45" y="290" class="muted">1. model_request → 2. <tspan class="step-num">tool: lookup_customer(id="123")</tspan></text>
+    <text x="45" y="315" class="muted">3. <tspan class="step-num">tool: refund_customer(amount=39)</tspan></text>
+    
+    <text x="25" y="355" class="fail-title">Divergence at step 3:</text>
+    <text x="45" y="380" class="diff-del">- tool_call: check_refund_policy(tier="gold")</text>
+    <text x="45" y="405" class="diff-add">+ tool_call: refund_customer(amount=39)</text>
+    
+    <text x="25" y="445"><tspan class="fail-title">====================== 1 failed </tspan><tspan class="muted">in 0.05s ======================</tspan></text>
+  </g>
+</svg>

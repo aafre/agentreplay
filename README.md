@@ -12,8 +12,16 @@
 
 Record real model and tool interactions once, replay them offline in pytest with zero API calls, and detect behavioural regressions with structured trajectory diffs.
 
-[Overview](#overview) • [Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [Cassette Format](#cassette-format) • [CLI & Fixture Reference](#cli--fixture-reference) • [Development](#development)
+[Overview](#overview) • [Demo](#demo) • [Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [Cassette Format](#cassette-format) • [CLI & Fixture Reference](#cli--fixture-reference) • [Development](#development)
 
+</div>
+
+---
+
+## Demo
+
+<div align="center">
+  <img src="assets/demo.svg" alt="pytest-agentreplay record, replay, and trajectory diff demonstration" width="100%" />
 </div>
 
 ---
@@ -135,6 +143,44 @@ def test_custom_refund():
     )
     assert "refund" in result.output.lower()
 ```
+
+<details>
+<summary><b>Interactive Live Example (Click to expand)</b></summary>
+
+Here is a complete, self-contained example you can run immediately without API keys using PydanticAI's built-in `TestModel`:
+
+```python
+from pathlib import Path
+from pydantic_ai import Agent
+from pydantic_ai.models.test import TestModel
+from pydantic_ai.tools import RunContext
+import agentreplay
+
+
+# 1. Define your agent & tools
+def lookup_customer(ctx: RunContext[None], customer_id: str) -> str:
+    return f"Customer {customer_id}: Alice (tier=gold)"
+
+
+support_agent = Agent(
+    TestModel(call_tools=["lookup_customer"]),
+    tools=[lookup_customer],
+)
+
+cassette = Path("test_refund.jsonl")
+
+# 2. Record: live interaction captured to JSONL
+cap_record = agentreplay.pydantic_ai(mode="record", cassette_path=cassette)
+record_result = support_agent.run_sync("Find customer 123", capabilities=[cap_record])
+print("Recorded output:", record_result.output)
+
+# 3. Replay: 100% offline, zero model/tool execution
+cap_replay = agentreplay.pydantic_ai(mode="replay", cassette_path=cassette)
+replay_result = support_agent.run_sync("Find customer 123", capabilities=[cap_replay])
+print("Replayed output:", replay_result.output)
+assert record_result.output == replay_result.output
+```
+</details>
 
 ---
 

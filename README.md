@@ -8,7 +8,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/aafre/agentreplay/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/aafre/agentreplay/actions)
 [![Python Version](https://img.shields.io/pypi/pyversions/pytest-agentreplay?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pytest-agentreplay/)
-[![PyPI version](https://img.shields.io/pypi/v/pytest-agentreplay?style=flat-square&color=blue&v=0.2.1)](https://pypi.org/project/pytest-agentreplay/)
+[![PyPI version](https://img.shields.io/pypi/v/pytest-agentreplay?style=flat-square&color=blue&v=0.2.2)](https://pypi.org/project/pytest-agentreplay/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square)](LICENSE)
 [![Checked with mypy](https://img.shields.io/badge/mypy-strict-blue?style=flat-square)](https://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat-square)](https://github.com/astral-sh/ruff)

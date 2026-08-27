@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from agentreplay.adapters.pydantic_ai import AgentReplayCapability
     from agentreplay.adapters.session import Session
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 __all__ = [
     "Cassette",

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import pytest
 
@@ -64,6 +64,55 @@ class AgentReplayFixture:
         from agentreplay.adapters.pydantic_ai import AgentReplayCapability
 
         return AgentReplayCapability(mode=self._mode, cassette_path=target_path)
+
+    def session(
+        self,
+        cassette_path: str | Path | None = None,
+        framework: str = "raw-sdk",
+    ) -> Any:
+        """Return an active Session context manager configured for this test."""
+        from agentreplay.adapters.session import Session
+
+        target_path = (
+            Path(cassette_path) if cassette_path is not None else self.default_cassette_path
+        )
+        return Session(mode=self._mode, cassette_path=target_path, framework=framework)
+
+    def openai(
+        self,
+        client: Any,
+        cassette_path: str | Path | None = None,
+    ) -> Any:
+        """Wrap an OpenAI client for this test."""
+        if self._mode is None:
+            return client
+        target_path = (
+            Path(cassette_path) if cassette_path is not None else self.default_cassette_path
+        )
+        from agentreplay.adapters.openai import openai as openai_wrapper
+        from agentreplay.adapters.session import Session
+
+        sess = Session(mode=self._mode, cassette_path=target_path, framework="openai")
+        return openai_wrapper(client, mode=self._mode, cassette=sess.cassette, cursor=sess.cursor)
+
+    def anthropic(
+        self,
+        client: Any,
+        cassette_path: str | Path | None = None,
+    ) -> Any:
+        """Wrap an Anthropic client for this test."""
+        if self._mode is None:
+            return client
+        target_path = (
+            Path(cassette_path) if cassette_path is not None else self.default_cassette_path
+        )
+        from agentreplay.adapters.anthropic import anthropic as anthropic_wrapper
+        from agentreplay.adapters.session import Session
+
+        sess = Session(mode=self._mode, cassette_path=target_path, framework="anthropic")
+        return anthropic_wrapper(
+            client, mode=self._mode, cassette=sess.cassette, cursor=sess.cursor
+        )
 
 
 @pytest.fixture

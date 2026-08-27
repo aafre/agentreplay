@@ -21,8 +21,91 @@ Record real model and tool interactions once, replay them offline in pytest with
 ## Demo
 
 <div align="center">
-  <img src="assets/demo.svg" alt="pytest-agentreplay record, replay, and trajectory diff demonstration" width="100%" />
+  <img src="assets/demo.svg" alt="pytest-agentreplay record, replay, and trajectory diff lifecycle" width="100%" />
 </div>
+
+<br>
+
+<details open>
+<summary><b>🎬 Step-by-Step Interactive Walkthrough (Click to expand / collapse)</b></summary>
+
+### 1️⃣ Record Mode — Capture Real Agent Trajectories Once
+Run pytest with `--agentreplay=record` during local development or when authoring tests. `pytest-agentreplay` non-invasively intercepts model requests, responses, and tool executions, saving a canonical Git-diffable `.jsonl` cassette:
+
+```bash
+pytest --agentreplay=record tests/test_refund.py
+```
+```text
+RECORD  tests/cassettes/test_refund/test_refund_flow.jsonl
+  ✓ Intercepted via PydanticAI capability hooks
+  ✓ 2 model request/response turns captured
+  ✓ 3 tool calls recorded (lookup_customer, check_refund_policy, refund_customer)
+  ✓ Canonical JSONL cassette saved (format_version=1)
+
+tests/test_refund.py::test_refund_flow PASSED [100%]
+====================== 1 passed in 2.45s (recorded to disk) ======================
+```
+
+---
+
+### 2️⃣ Fast Replay Mode — 100% Offline CI in Milliseconds
+Run with `--agentreplay=replay` in CI pipelines. Zero network calls, zero API token costs, and 100% deterministic execution:
+
+```bash
+pytest --agentreplay=replay tests/test_refund.py
+```
+```text
+REPLAY  tests/cassettes/test_refund/test_refund_flow.jsonl
+  ✓ ZERO live model API calls (skipped via SkipModelRequest)
+  ✓ ZERO tool/network execution (skipped via SkipToolExecution)
+  ✓ Replay position cursor matched all 7 cassette events
+  ✓ 100% deterministic test execution
+
+tests/test_refund.py::test_refund_flow PASSED [100%]
+====================== 1 passed in 0.04s (60x faster / zero tokens used) ======================
+```
+
+---
+
+### 3️⃣ Trajectory Diff — Catch Subtle Behavioural Regressions
+Suppose someone edits the agent prompt or upgrades model weights, and the agent now accidentally skips `check_refund_policy` and immediately refunds money. `agentreplay` stops execution and pinpoints the exact divergence:
+
+```bash
+pytest --agentreplay=replay tests/test_refund.py
+```
+```text
+FAILED tests/test_refund.py::test_refund_flow - DivergenceError:
+
+Agent trajectory changed
+
+Expected:
+  1. model_request
+  2. tool_call: lookup_customer(id='123')
+  3. tool_call: check_refund_policy(tier='gold')
+  4. tool_call: refund_customer(amount=39)
+  5. model_response → "Refund processed."
+
+Actual:
+  1. model_request
+  2. tool_call: lookup_customer(id='123')
+  3. tool_call: refund_customer(amount=39)
+
+Divergence at step 3:
+  - tool_call: check_refund_policy(tier='gold')
+  + tool_call: refund_customer(amount=39)
+====================== 1 failed in 0.05s ======================
+```
+</details>
+
+<br>
+
+| Capability | Live LLMs in CI | Traditional Mocks | `pytest-agentreplay` |
+|---|:---:|:---:|:---:|
+| **CI Execution Speed** | 🐌 15s – 60s+ | ⚡ < 1s | ⚡ **< 0.05s (60x faster)** |
+| **API Costs & Rate Limits** | 💸 High & Flaky | 🆓 Zero | 🆓 **Zero ($0.00 tokens)** |
+| **Catches Prompt Drift** | ❌ Flaky / Stochastic | ❌ No (hardcoded return) | ✅ **Yes (Trajectory Diffs)** |
+| **Detects Tool Bypass** | ⚠️ Only if output fails | ❌ Misses sequence order | ✅ **Exact Step Divergence** |
+| **Maintenance Overhead** | ❌ Endless triage | ❌ Tedious mock writing | ✅ **1-command cassette update** |
 
 ---
 
@@ -60,17 +143,16 @@ Testing AI agents in continuous integration is often painful:
 Install `pytest-agentreplay` using `uv` or `pip`:
 
 ```bash
-# Using uv (recommended)
+# Core package
 uv add pytest-agentreplay
 
-# Using pip
-pip install pytest-agentreplay
-```
+# With specific framework adapters
+uv add pytest-agentreplay[pydantic-ai]  # PydanticAI
+uv add pytest-agentreplay[openai]       # OpenAI Python SDK
+uv add pytest-agentreplay[anthropic]    # Anthropic Python SDK
 
-To include development dependencies:
-
-```bash
-uv add --dev pytest-agentreplay[pydantic-ai,pytest]
+# Install all adapters
+uv add pytest-agentreplay[all]
 ```
 
 ---
@@ -221,7 +303,55 @@ Explore fully functional agent examples in the [`examples/`](examples) directory
 | **[E-Commerce Refund Agent](examples/ecommerce_support/)** | Multi-step agent with fraud detection, tier calculations, and payment gateway calls. | Catches silent regressions where prompt changes bypass fraud checks before issuing refunds. |
 | **[SQL Data Analyst Agent](examples/sql_analyst/)** | Natural-language-to-SQL agent with schema discovery and read-only query guardrails. | Tests query planning and schema lookup trajectories in CI without spinning up live database replicas. |
 | **[DevOps Incident Triage Agent](examples/devops_incident/)** | Operations agent parsing cluster logs, evaluating change policy, and executing remediations. | Prevents unsafe direct restarts by ensuring diagnostic logs & policy checks are never bypassed. |
+| **[Vanilla OpenAI Agent Loop](examples/raw_openai_agent/)** | Custom multi-turn tool-calling loop built directly with the official OpenAI SDK. | Enables teams building custom agent loops without frameworks to record and replay trajectories. |
 | **[Customer Support Agent](examples/support_agent.py)** | Standalone customer tier lookup and policy verification demo. | Minimal single-file reference for quick onboarding. |
+
+---
+
+## Supported Frameworks & Adapters
+
+### 1. PydanticAI
+```python
+import agentreplay
+
+# Pass capability directly to Agent.run_sync or run
+result = agent.run_sync(
+    "User prompt",
+    capabilities=[agentreplay.pydantic_ai(mode="replay", cassette_path="cassette.jsonl")],
+)
+```
+
+### 2. OpenAI SDK (Sync & Async)
+```python
+from openai import OpenAI
+import agentreplay
+
+# Wrap any OpenAI client
+client = agentreplay.openai(OpenAI(), mode="replay", cassette_path="cassette.jsonl")
+completion = client.chat.completions.create(model="gpt-4o", messages=[...])
+```
+
+### 3. Anthropic SDK (Sync & Async)
+```python
+from anthropic import Anthropic
+import agentreplay
+
+# Wrap any Anthropic client
+client = agentreplay.anthropic(Anthropic(), mode="replay", cassette_path="cassette.jsonl")
+message = client.messages.create(model="claude-3-5-sonnet-20241022", messages=[...])
+```
+
+### 4. Custom Python Tools (`@agentreplay.tool`)
+```python
+import agentreplay
+
+
+@agentreplay.tool
+def execute_payment(account_id: str, amount: float) -> dict:
+    # On record: executes real code & saves result
+    # On replay: skips execution & returns recorded result
+    return {"status": "success", "tx_id": "tx_999"}
+```
 
 ---
 
@@ -254,7 +384,7 @@ Explore fully functional agent examples in the [`examples/`](examples) directory
 
 ## Cassette Format
 
-Cassettes are stored as streamable, Git-diffable **JSON Lines (JSONL)** files.
+Cassettes are stored as streamable, Git-diffable **JSON Lines (JSONL)** files. Each interaction turn is appended in real-time as a canonical `TraceEvent`.
 
 Line 1 contains the cassette header with format versioning and metadata:
 ```json

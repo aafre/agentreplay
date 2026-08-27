@@ -12,7 +12,7 @@
 
 Record real model and tool interactions once, replay them offline in pytest with zero API calls, and detect behavioural regressions with structured trajectory diffs.
 
-[Overview](#overview) • [Demo](#demo) • [Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [Cassette Format](#cassette-format) • [CLI & Fixture Reference](#cli--fixture-reference) • [Development](#development)
+[Overview](#overview) • [Demo](#demo) • [Examples](#real-world-examples) • [Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [Cassette Format](#cassette-format) • [CLI & Fixture Reference](#cli--fixture-reference) • [Development](#development)
 
 </div>
 
@@ -209,6 +209,18 @@ Divergence at step 3:
   - tool_call: check_refund_policy(tier='gold')
   + tool_call: refund_customer(amount=39)
 ```
+
+---
+
+## Real-World Examples
+
+Explore fully functional agent examples in the [`examples/`](examples) directory:
+
+| Example | Scenario | Why Replay Matters |
+|---|---|---|
+| **[E-Commerce Refund Agent](examples/ecommerce_support/)** | Multi-step agent with fraud detection, tier calculations, and payment gateway calls. | Catches silent regressions where prompt changes bypass fraud checks before issuing refunds. |
+| **[SQL Data Analyst Agent](examples/sql_analyst/)** | Natural-language-to-SQL agent with schema discovery and read-only query guardrails. | Tests query planning and schema lookup trajectories in CI without spinning up live database replicas. |
+| **[Customer Support Agent](examples/support_agent.py)** | Standalone customer tier lookup and policy verification demo. | Minimal single-file reference for quick onboarding. |
 
 ---
 

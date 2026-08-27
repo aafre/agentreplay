@@ -5,8 +5,8 @@
 **Framework-agnostic regression testing for AI agents**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/aafre/agentreplay/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/aafre/agentreplay/actions)
-[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-3776ab?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/agentreplay/)
-[![PyPI version](https://img.shields.io/pypi/v/agentreplay?style=flat-square&color=blue)](https://pypi.org/project/agentreplay/)
+[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-3776ab?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pytest-agentreplay/)
+[![PyPI version](https://img.shields.io/pypi/v/pytest-agentreplay?style=flat-square&color=blue)](https://pypi.org/project/pytest-agentreplay/)
 [![Checked with mypy](https://img.shields.io/badge/mypy-strict-blue?style=flat-square)](https://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat-square)](https://github.com/astral-sh/ruff)
 
@@ -49,20 +49,20 @@ Testing AI agents in continuous integration is often painful:
 
 ## Installation
 
-Install `agentreplay` using `uv` or `pip`:
+Install `pytest-agentreplay` using `uv` or `pip`:
 
 ```bash
 # Using uv (recommended)
-uv add agentreplay
+uv add pytest-agentreplay
 
 # Using pip
-pip install agentreplay
+pip install pytest-agentreplay
 ```
 
 To include development dependencies:
 
 ```bash
-uv add --dev agentreplay[pydantic-ai,pytest]
+uv add --dev pytest-agentreplay[pydantic-ai,pytest]
 ```
 
 ---

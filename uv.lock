@@ -8,40 +8,6 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "agentreplay"
-version = "0.1.0"
-source = { editable = "." }
-
-[package.optional-dependencies]
-dev = [
-    { name = "hypothesis" },
-    { name = "mypy" },
-    { name = "pydantic-ai" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "ruff" },
-]
-pydantic-ai = [
-    { name = "pydantic-ai" },
-]
-pytest = [
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.15" },
-    { name = "pydantic-ai", marker = "extra == 'dev'", specifier = ">=2.0" },
-    { name = "pydantic-ai", marker = "extra == 'pydantic-ai'", specifier = ">=2.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest", marker = "extra == 'pytest'", specifier = ">=8.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.25" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.11" },
-]
-provides-extras = ["pydantic-ai", "pytest", "dev"]
-
-[[package]]
 name = "aiofile"
 version = "3.12.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1791,6 +1757,40 @@ sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa
 wheels = [
     { url = "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl", hash = "sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c", size = 386536, upload-time = "2026-06-19T10:58:31.347Z" },
 ]
+
+[[package]]
+name = "pytest-agentreplay"
+version = "0.1.0"
+source = { editable = "." }
+
+[package.optional-dependencies]
+dev = [
+    { name = "hypothesis" },
+    { name = "mypy" },
+    { name = "pydantic-ai" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "ruff" },
+]
+pydantic-ai = [
+    { name = "pydantic-ai" },
+]
+pytest = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.15" },
+    { name = "pydantic-ai", marker = "extra == 'dev'", specifier = ">=2.0" },
+    { name = "pydantic-ai", marker = "extra == 'pydantic-ai'", specifier = ">=2.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "pytest", marker = "extra == 'pytest'", specifier = ">=8.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.25" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.11" },
+]
+provides-extras = ["pydantic-ai", "pytest", "dev"]
 
 [[package]]
 name = "pytest-asyncio"

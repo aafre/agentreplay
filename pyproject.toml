@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "agentreplay"
+name = "pytest-agentreplay"
 version = "0.1.0"
 description = "Regression tests for AI agents. Record once, replay offline, catch behavioural regressions."
 readme = "README.md"

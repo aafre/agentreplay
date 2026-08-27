@@ -1,0 +1,85 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentreplay"
+version = "0.1.0"
+description = "Regression tests for AI agents. Record once, replay offline, catch behavioural regressions."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+authors = [{ name = "Amit Afre" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Testing",
+    "Typing :: Typed",
+]
+keywords = [
+    "ai-agents",
+    "pydantic-ai",
+    "pytest",
+    "record-replay",
+    "regression-testing",
+    "testing",
+    "vcr",
+]
+
+[project.optional-dependencies]
+pydantic-ai = ["pydantic-ai>=2.0"]
+pytest = ["pytest>=8.0"]
+dev = [
+    "ruff>=0.11",
+    "mypy>=1.15",
+    "pytest>=8.0",
+    "pytest-asyncio>=0.25",
+    "hypothesis>=6.0",
+    "pydantic-ai>=2.0",
+]
+
+[project.entry-points.pytest11]
+agentreplay = "agentreplay.pytest_plugin"
+
+[project.urls]
+Homepage = "https://github.com/aafre/agentreplay"
+Repository = "https://github.com/aafre/agentreplay"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentreplay"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 99
+src = ["src", "tests", "examples"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific
+]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+mypy_path = "src"
+packages = ["agentreplay"]
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

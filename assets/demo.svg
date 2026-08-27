@@ -1,274 +1,230 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 540" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 450" width="100%" height="100%">
   <defs>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap');
-      
-      .font-term {
-        font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, Monaco, monospace;
-        font-size: 13.5px;
-        line-height: 22px;
-      }
+    <style><![CDATA[
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
       .font-sans {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       }
+      .font-mono {
+        font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', Menlo, Consolas, Monaco, monospace;
+        font-size: 11.5px;
+        line-height: 18px;
+      }
+
+      /* GitHub Dark Syntax Tokens */
+      .c-bg { fill: #0d1117; }
+      .c-pane-bg { fill: #161b22; }
+      .c-inner-bg { fill: #090d13; }
+      .c-border { stroke: #30363d; stroke-width: 1px; fill: none; }
+      .c-border-subtle { stroke: #21262d; stroke-width: 1px; fill: none; }
       
-      /* Colors */
-      .bg-term { fill: #0d1117; }
-      .bar-term { fill: #161b22; }
-      .border-term { stroke: #30363d; stroke-width: 1px; fill: none; }
-      
-      .c-prompt { fill: #58a6ff; font-weight: 700; }
-      .c-cmd { fill: #f0f6fc; font-weight: 500; }
-      .c-dim { fill: #6e7681; }
+      .c-text { fill: #e6edf3; }
       .c-muted { fill: #8b949e; }
-      .c-green { fill: #3fb950; font-weight: 600; }
-      .c-green-sub { fill: #7ee787; }
-      .c-cyan { fill: #58a6ff; }
-      .c-purple { fill: #d2a8ff; font-weight: 600; }
-      .c-amber { fill: #e3b341; font-weight: 600; }
-      .c-red { fill: #f85149; font-weight: 700; }
-      .c-diff-del { fill: #ffa198; font-weight: 500; }
-      .c-diff-add { fill: #7ee787; font-weight: 500; }
-      
-      /* Reel Spin Animation */
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
-      .spin-hub1 {
-        transform-origin: 752px 21px;
-        animation: spin 3s linear infinite;
-      }
-      .spin-hub2 {
-        transform-origin: 778px 21px;
-        animation: spin 3s linear infinite;
-      }
+      .c-dim { fill: #6e7681; }
+      .c-blue { fill: #58a6ff; }
+      .c-green { fill: #3fb950; }
+      .c-red { fill: #f85149; }
+      .c-amber { fill: #d29922; }
+      .c-purple { fill: #bc8cff; }
 
-      /* Blinking Cursor */
-      @keyframes blink {
-        0%, 49% { opacity: 1; }
-        50%, 100% { opacity: 0; }
-      }
-      .cursor {
-        fill: #58a6ff;
-        animation: blink 0.8s infinite;
-      }
-
-      /* Timeline Progress Bar (18s Loop) */
-      @keyframes progress {
-        0% { width: 0px; }
-        31% { width: 920px; }
-        33.3% { width: 0px; }
-        64% { width: 920px; }
-        66.6% { width: 0px; }
-        97% { width: 920px; }
-        100% { width: 0px; }
-      }
-      .timeline-bar {
-        animation: progress 18s linear infinite;
-      }
-
-      /* Tab 1 (0s - 6s), Tab 2 (6s - 12s), Tab 3 (12s - 18s) */
-      @keyframes tab1State {
-        0%, 31% { fill: #1f293d; stroke: #388bfd; }
-        33.3%, 100% { fill: #161b22; stroke: #30363d; }
-      }
-      @keyframes tab1Text {
-        0%, 31% { fill: #58a6ff; font-weight: 700; }
-        33.3%, 100% { fill: #8b949e; font-weight: 500; }
-      }
-      .tab1-btn { animation: tab1State 18s infinite; }
-      .tab1-lbl { animation: tab1Text 18s infinite; }
-
-      @keyframes tab2State {
-        0%, 33.3% { fill: #161b22; stroke: #30363d; }
-        34%, 64% { fill: #1c2e24; stroke: #2ea043; }
-        66.6%, 100% { fill: #161b22; stroke: #30363d; }
-      }
-      @keyframes tab2Text {
-        0%, 33.3% { fill: #8b949e; font-weight: 500; }
-        34%, 64% { fill: #3fb950; font-weight: 700; }
-        66.6%, 100% { fill: #8b949e; font-weight: 500; }
-      }
-      .tab2-btn { animation: tab2State 18s infinite; }
-      .tab2-lbl { animation: tab2Text 18s infinite; }
-
-      @keyframes tab3State {
-        0%, 66.6% { fill: #161b22; stroke: #30363d; }
-        67.3%, 97% { fill: #321c1f; stroke: #da3633; }
-        100% { fill: #161b22; stroke: #30363d; }
-      }
-      @keyframes tab3Text {
-        0%, 66.6% { fill: #8b949e; font-weight: 500; }
-        67.3%, 97% { fill: #f85149; font-weight: 700; }
-        100% { fill: #8b949e; font-weight: 500; }
-      }
-      .tab3-btn { animation: tab3State 18s infinite; }
-      .tab3-lbl { animation: tab3Text 18s infinite; }
-
-      /* Scene Visibility Controls */
-      @keyframes scene1Anim {
-        0%, 1% { opacity: 0; transform: translateY(4px); }
-        3%, 30.5% { opacity: 1; transform: translateY(0); }
-        32%, 100% { opacity: 0; transform: translateY(-4px); }
-      }
-      @keyframes scene2Anim {
-        0%, 33.3% { opacity: 0; transform: translateY(4px); }
-        35.5%, 63.8% { opacity: 1; transform: translateY(0); }
-        65.5%, 100% { opacity: 0; transform: translateY(-4px); }
-      }
-      @keyframes scene3Anim {
-        0%, 66.6% { opacity: 0; transform: translateY(4px); }
-        69%, 97.2% { opacity: 1; transform: translateY(0); }
-        99%, 100% { opacity: 0; transform: translateY(-4px); }
-      }
-
-      .scene1 { animation: scene1Anim 18s infinite; }
-      .scene2 { animation: scene2Anim 18s infinite; }
-      .scene3 { animation: scene3Anim 18s infinite; }
-    </style>
-
-    <linearGradient id="timeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#388bfd" />
-      <stop offset="50%" stop-color="#2ea043" />
-      <stop offset="100%" stop-color="#da3633" />
-    </linearGradient>
+      .diff-del-bg { fill: #3b1219; }
+      .diff-del-text { fill: #ff7b72; font-weight: 500; }
+      .diff-add-bg { fill: #112d1b; }
+      .diff-add-text { fill: #7ee787; font-weight: 500; }
+    ]]></style>
   </defs>
 
-  <!-- Terminal Window Base -->
-  <rect class="bg-term" x="0" y="0" width="920" height="540" rx="10" />
-  <rect class="border-term" x="0.5" y="0.5" width="919" height="539" rx="10" />
+  <!-- Terminal Window Base Canvas -->
+  <rect class="c-bg" x="0" y="0" width="960" height="450" rx="8" />
+  <rect class="c-border" x="0.5" y="0.5" width="959" height="449" rx="8" />
 
-  <!-- Terminal Header Bar -->
-  <rect class="bar-term" x="0" y="0" width="920" height="42" rx="10" />
-  <rect class="bar-term" x="0" y="32" width="920" height="10" />
-  <line x1="0" y1="42" x2="920" y2="42" stroke="#30363d" stroke-width="1" />
-  
+  <!-- Window Header Bar -->
+  <path d="M 0 8 C 0 3.5 3.5 0 8 0 L 952 0 C 956.5 0 960 3.5 960 8 L 960 38 L 0 38 Z" fill="#161b22" />
+  <line x1="0" y1="38" x2="960" y2="38" stroke="#30363d" stroke-width="1" />
+
   <!-- Window Controls -->
-  <circle cx="20" cy="21" r="6" fill="#ff5f56" />
-  <circle cx="38" cy="21" r="6" fill="#ffbd2e" />
-  <circle cx="56" cy="21" r="6" fill="#27c93f" />
+  <circle cx="20" cy="19" r="5.5" fill="#f85149" />
+  <circle cx="37" cy="19" r="5.5" fill="#d29922" />
+  <circle cx="54" cy="19" r="5.5" fill="#2ea043" />
 
-  <!-- Phase Switcher Tabs in Titlebar -->
-  <g class="font-sans" font-size="12">
-    <!-- Tab 1: Record -->
-    <rect class="tab1-btn" x="115" y="8" width="180" height="26" rx="6" stroke-width="1" />
-    <text class="tab1-lbl" x="205" y="25" text-anchor="middle">● 1. Record Trajectory</text>
-
-    <!-- Tab 2: Replay -->
-    <rect class="tab2-btn" x="305" y="8" width="185" height="26" rx="6" stroke-width="1" />
-    <text class="tab2-lbl" x="397" y="25" text-anchor="middle">⚡ 2. Fast Replay (0s)</text>
-
-    <!-- Tab 3: Diff -->
-    <rect class="tab3-btn" x="500" y="8" width="195" height="26" rx="6" stroke-width="1" />
-    <text class="tab3-lbl" x="597" y="25" text-anchor="middle">🔍 3. Catch Regressions</text>
-  </g>
-
-  <!-- Mini Cassette Spool Widget (Right corner of header) -->
-  <g transform="translate(710, 8)">
-    <rect x="0" y="0" width="195" height="26" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1" />
-    
-    <!-- Mini Spool Left -->
-    <circle cx="42" cy="13" r="8" fill="#21262d" stroke="#30363d" stroke-width="1" />
-    <g class="spin-hub1">
-      <circle cx="752" cy="21" r="4" fill="#58a6ff" />
-      <circle cx="752" cy="18" r="1" fill="#0d1117" />
-      <circle cx="752" cy="24" r="1" fill="#0d1117" />
-    </g>
-
-    <!-- Mini Spool Right -->
-    <circle cx="68" cy="13" r="8" fill="#21262d" stroke="#30363d" stroke-width="1" />
-    <g class="spin-hub2">
-      <circle cx="778" cy="21" r="4" fill="#3fb950" />
-      <circle cx="778" cy="18" r="1" fill="#0d1117" />
-      <circle cx="778" cy="24" r="1" fill="#0d1117" />
-    </g>
-
-    <text class="font-mono" x="84" y="17" fill="#8b949e" font-size="10.5" font-weight="600">CASSETTE TAPE</text>
-  </g>
-
-  <!-- Progress Bar at bottom of titlebar -->
-  <rect x="0" y="41" width="920" height="2" fill="#21262d" />
-  <rect class="timeline-bar" x="0" y="41" width="0" height="2" fill="url(#timeGrad)" />
+  <!-- Window Title -->
+  <text class="font-sans" x="480" y="23" fill="#8b949e" font-size="12" font-weight="500" text-anchor="middle">
+    pytest-agentreplay — Record, Fast Offline Replay, and Structural Trajectory Diffs
+  </text>
 
   <!-- ========================================================================= -->
-  <!-- SCENE 1: RECORD MODE TERMINAL OUTPUT                                      -->
+  <!-- COLUMN 1: RECORD (LOCAL DEV)                                              -->
   <!-- ========================================================================= -->
-  <g class="font-term scene1">
-    <text x="28" y="80"><tspan class="c-prompt">$ </tspan><tspan class="c-cmd">pytest --agentreplay=record tests/test_refund.py</tspan><tspan class="cursor">▋</tspan></text>
-    <text x="28" y="112" class="c-dim">collecting ... collected 1 item</text>
-    
-    <text x="28" y="150" class="c-cyan" font-weight="700">RECORD  </text><text x="98" y="150" class="c-muted">tests/cassettes/test_refund/test_refund_flow.jsonl</text>
-    
-    <g transform="translate(10, 0)">
-      <text x="28" y="180" class="c-green-sub">  ✓ Intercepted via PydanticAI capability hooks</text>
-      <text x="28" y="206" class="c-green-sub">  ✓ 2 model request/response turns captured</text>
-      <text x="28" y="232" class="c-green-sub">  ✓ 3 tool calls recorded (lookup_customer, check_policy, refund)</text>
-      <text x="28" y="258" class="c-green-sub">  ✓ Canonical JSONL cassette saved (format_version=1)</text>
+  <g transform="translate(18, 52)">
+    <!-- Pane Container -->
+    <rect class="c-pane-bg" x="0" y="0" width="294" height="380" rx="6" />
+    <rect class="c-border" x="0.5" y="0.5" width="293" height="379" rx="6" />
+
+    <!-- Pane Header -->
+    <path d="M 0 6 C 0 2.5 2.5 0 6 0 L 288 0 C 291.5 0 294 2.5 294 6 L 294 36 L 0 36 Z" fill="#1c2128" />
+    <line x1="0" y1="36" x2="294" y2="36" stroke="#30363d" stroke-width="1" />
+
+    <circle cx="16" cy="18" r="8" fill="#1f6feb" />
+    <text class="font-sans" x="16" y="22" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">1</text>
+    <text class="font-sans" x="32" y="22" fill="#e6edf3" font-size="12" font-weight="600">RECORD</text>
+    <text class="font-sans" x="280" y="22" fill="#8b949e" font-size="11" text-anchor="end">Local Dev</text>
+
+    <!-- Terminal Code Block -->
+    <g transform="translate(12, 48)">
+      <rect class="c-inner-bg" x="0" y="0" width="270" height="318" rx="4" />
+      <rect class="c-border-subtle" x="0.5" y="0.5" width="269" height="317" rx="4" />
+
+      <g class="font-mono" transform="translate(12, 22)">
+        <!-- Command line -->
+        <text x="0" y="0"><tspan class="c-dim">$ </tspan><tspan class="c-text">pytest </tspan><tspan class="c-blue">--agentreplay=record</tspan></text>
+        
+        <!-- Output -->
+        <text x="0" y="26" class="c-dim">collecting ... 1 item</text>
+        
+        <text x="0" y="58" class="c-blue" font-weight="600">RECORD</text>
+        <text x="52" y="58" class="c-muted">tests/cassettes/</text>
+        <text x="0" y="76" class="c-muted">test_refund_flow.jsonl</text>
+        
+        <text x="0" y="112" class="c-green">✓</text>
+        <text x="14" y="112" class="c-text">Intercepted via capability</text>
+
+        <text x="0" y="136" class="c-green">✓</text>
+        <text x="14" y="136" class="c-text">Captured 2 model turns</text>
+
+        <text x="0" y="160" class="c-green">✓</text>
+        <text x="14" y="160" class="c-text">Recorded 2 tool calls:</text>
+        <text x="14" y="180" class="c-dim">↳ lookup_customer(123)</text>
+        <text x="14" y="198" class="c-dim">↳ check_policy(&quot;gold&quot;)</text>
+
+        <text x="0" y="230" class="c-green">✓</text>
+        <text x="14" y="230" class="c-text">Saved canonical JSONL</text>
+
+        <!-- Summary line -->
+        <line x1="0" y1="250" x2="246" y2="250" stroke="#21262d" stroke-width="1" />
+        <text x="0" y="272"><tspan class="c-green" font-weight="600">1 passed</tspan><tspan class="c-dim"> in 2.14s</tspan></text>
+      </g>
     </g>
-    
-    <text x="28" y="310" class="c-muted">tests/test_refund.py::test_refund_flow </text><text x="355" y="310" class="c-green">PASSED</text><text x="420" y="310" class="c-dim"> [100%]</text>
-    
-    <text x="28" y="360"><tspan class="c-green">====================== 1 passed </tspan><tspan class="c-muted">in 2.45s (recorded to disk) ======================</tspan></text>
-    
-    <!-- Footer Callout Box -->
-    <rect x="28" y="405" width="864" height="48" rx="6" fill="#161b22" stroke="#388bfd" stroke-width="1" />
-    <text class="font-sans" x="46" y="434" fill="#58a6ff" font-size="13" font-weight="600">💡 Record Once:</text>
-    <text class="font-term" x="156" y="435" fill="#c9d1d9" font-size="12.5">Captures full interaction into Git. No manual mocking or monkey-patching needed.</text>
+  </g>
+
+  <!-- Flow Connector 1 -> 2 -->
+  <g transform="translate(316, 232)">
+    <line x1="0" y1="0" x2="14" y2="0" stroke="#30363d" stroke-width="1.5" />
+    <polyline points="10,-4 15,0 10,4" fill="none" stroke="#8b949e" stroke-width="1.5" />
   </g>
 
   <!-- ========================================================================= -->
-  <!-- SCENE 2: REPLAY MODE TERMINAL OUTPUT                                      -->
+  <!-- COLUMN 2: REPLAY (100% OFFLINE CI)                                        -->
   <!-- ========================================================================= -->
-  <g class="font-term scene2">
-    <text x="28" y="80"><tspan class="c-prompt">$ </tspan><tspan class="c-cmd">pytest --agentreplay=replay tests/test_refund.py</tspan><tspan class="cursor">▋</tspan></text>
-    <text x="28" y="112" class="c-dim">collecting ... collected 1 item</text>
-    
-    <text x="28" y="150" class="c-green" font-weight="700">REPLAY  </text><text x="98" y="150" class="c-muted">tests/cassettes/test_refund/test_refund_flow.jsonl</text>
-    
-    <g transform="translate(10, 0)">
-      <text x="28" y="180" class="c-green-sub">  ✓ ZERO live model API calls (skipped via SkipModelRequest)</text>
-      <text x="28" y="206" class="c-green-sub">  ✓ ZERO tool/network execution (skipped via SkipToolExecution)</text>
-      <text x="28" y="232" class="c-green-sub">  ✓ Replay position cursor matched all 7 cassette events</text>
-      <text x="28" y="258" class="c-green-sub">  ✓ 100% deterministic test execution</text>
+  <g transform="translate(333, 52)">
+    <!-- Pane Container -->
+    <rect class="c-pane-bg" x="0" y="0" width="294" height="380" rx="6" />
+    <rect class="c-border" x="0.5" y="0.5" width="293" height="379" rx="6" />
+
+    <!-- Pane Header -->
+    <path d="M 0 6 C 0 2.5 2.5 0 6 0 L 288 0 C 291.5 0 294 2.5 294 6 L 294 36 L 0 36 Z" fill="#1c2128" />
+    <line x1="0" y1="36" x2="294" y2="36" stroke="#30363d" stroke-width="1" />
+
+    <circle cx="16" cy="18" r="8" fill="#238636" />
+    <text class="font-sans" x="16" y="22" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">2</text>
+    <text class="font-sans" x="32" y="22" fill="#e6edf3" font-size="12" font-weight="600">FAST REPLAY</text>
+    <text class="font-sans" x="280" y="22" fill="#3fb950" font-size="11" font-weight="600" text-anchor="end">0.04s • CI / CD</text>
+
+    <!-- Terminal Code Block -->
+    <g transform="translate(12, 48)">
+      <rect class="c-inner-bg" x="0" y="0" width="270" height="318" rx="4" />
+      <rect class="c-border-subtle" x="0.5" y="0.5" width="269" height="317" rx="4" />
+
+      <g class="font-mono" transform="translate(12, 22)">
+        <!-- Command line -->
+        <text x="0" y="0"><tspan class="c-dim">$ </tspan><tspan class="c-text">pytest </tspan><tspan class="c-green">--agentreplay=replay</tspan></text>
+        
+        <!-- Output -->
+        <text x="0" y="26" class="c-dim">collecting ... 1 item</text>
+        
+        <text x="0" y="58" class="c-green" font-weight="600">REPLAY</text>
+        <text x="52" y="58" class="c-muted">tests/cassettes/</text>
+        <text x="0" y="76" class="c-muted">test_refund_flow.jsonl</text>
+        
+        <text x="0" y="112" class="c-green">✓</text>
+        <text x="14" y="112" class="c-text">Zero model API calls</text>
+        <text x="14" y="130" class="c-dim">↳ SkipModelRequest</text>
+
+        <text x="0" y="154" class="c-green">✓</text>
+        <text x="14" y="154" class="c-text">Zero tool/network calls</text>
+        <text x="14" y="172" class="c-dim">↳ SkipToolExecution</text>
+
+        <text x="0" y="196" class="c-green">✓</text>
+        <text x="14" y="196" class="c-text">100% deterministic</text>
+
+        <text x="0" y="226" class="c-green">✓</text>
+        <text x="14" y="226" class="c-text">Matched 4/4 trace events</text>
+
+        <!-- Summary line -->
+        <line x1="0" y1="250" x2="246" y2="250" stroke="#21262d" stroke-width="1" />
+        <text x="0" y="272"><tspan class="c-green" font-weight="600">1 passed</tspan><tspan class="c-text"> in </tspan><tspan class="c-purple" font-weight="600">0.04s </tspan><tspan class="c-dim">($0.00)</tspan></text>
+      </g>
     </g>
-    
-    <text x="28" y="310" class="c-muted">tests/test_refund.py::test_refund_flow </text><text x="355" y="310" class="c-green">PASSED</text><text x="420" y="310" class="c-dim"> [100%]</text>
-    
-    <text x="28" y="360"><tspan class="c-green">====================== 1 passed </tspan><tspan class="c-purple">in 0.04s </tspan><tspan class="c-green">(60x faster / zero tokens used) ======================</tspan></text>
-    
-    <!-- Footer Callout Box -->
-    <rect x="28" y="405" width="864" height="48" rx="6" fill="#161b22" stroke="#2ea043" stroke-width="1" />
-    <text class="font-sans" x="46" y="434" fill="#3fb950" font-size="13" font-weight="600">⚡ 100% Offline CI:</text>
-    <text class="font-term" x="175" y="435" fill="#c9d1d9" font-size="12.5">Runs entire suite in milliseconds without API keys, token bills, or rate limits.</text>
+  </g>
+
+  <!-- Flow Connector 2 -> 3 -->
+  <g transform="translate(631, 232)">
+    <line x1="0" y1="0" x2="14" y2="0" stroke="#30363d" stroke-width="1.5" />
+    <polyline points="10,-4 15,0 10,4" fill="none" stroke="#8b949e" stroke-width="1.5" />
   </g>
 
   <!-- ========================================================================= -->
-  <!-- SCENE 3: DIVERGENCE / DRIFT TERMINAL OUTPUT                               -->
+  <!-- COLUMN 3: CATCH REGRESSIONS (TRAJECTORY DIFF)                             -->
   <!-- ========================================================================= -->
-  <g class="font-term scene3">
-    <text x="28" y="75"><tspan class="c-prompt">$ </tspan><tspan class="c-cmd">pytest --agentreplay=replay tests/test_refund.py</tspan><tspan class="cursor">▋</tspan></text>
-    <text x="28" y="104" class="c-red">FAILED tests/test_refund.py::test_refund_flow - DivergenceError</text>
-    
-    <text x="28" y="132" class="c-amber">Agent trajectory changed</text>
-    
-    <text x="28" y="160" class="c-muted">Expected:</text>
-    <text x="46" y="184" class="c-dim">1. model_request → 2. <tspan fill="#79c0ff">tool: lookup_customer(id="123")</tspan></text>
-    <text x="46" y="208" class="c-dim">3. <tspan fill="#79c0ff">tool: check_refund_policy(tier="gold")</tspan> → 4. <tspan fill="#79c0ff">tool: refund_customer($39)</tspan></text>
-    
-    <text x="28" y="240" class="c-muted">Actual (Prompt update accidentally skipped policy check):</text>
-    <text x="46" y="264" class="c-dim">1. model_request → 2. <tspan fill="#79c0ff">tool: lookup_customer(id="123")</tspan></text>
-    <text x="46" y="288" class="c-dim">3. <tspan fill="#ffa198">tool: refund_customer($39)</tspan></text>
-    
-    <text x="28" y="322" class="c-red">Divergence at step 3:</text>
-    <text x="46" y="346" class="c-diff-del">- tool_call: check_refund_policy(tier="gold")</text>
-    <text x="46" y="368" class="c-diff-add">+ tool_call: refund_customer(amount=39)</text>
-    
-    <text x="28" y="405"><tspan class="c-red">====================== 1 failed </tspan><tspan class="c-muted">in 0.05s ======================</tspan></text>
-    
-    <!-- Footer Callout Box -->
-    <rect x="28" y="438" width="864" height="48" rx="6" fill="#161b22" stroke="#da3633" stroke-width="1" />
-    <text class="font-sans" x="46" y="467" fill="#f85149" font-size="13" font-weight="600">🔍 Trajectory Diff:</text>
-    <text class="font-term" x="180" y="468" fill="#c9d1d9" font-size="12.5">Instantly catches when agent logic drifts or skips security/compliance tools.</text>
+  <g transform="translate(648, 52)">
+    <!-- Pane Container -->
+    <rect class="c-pane-bg" x="0" y="0" width="294" height="380" rx="6" />
+    <rect class="c-border" x="0.5" y="0.5" width="293" height="379" rx="6" />
+
+    <!-- Pane Header -->
+    <path d="M 0 6 C 0 2.5 2.5 0 6 0 L 288 0 C 291.5 0 294 2.5 294 6 L 294 36 L 0 36 Z" fill="#1c2128" />
+    <line x1="0" y1="36" x2="294" y2="36" stroke="#30363d" stroke-width="1" />
+
+    <circle cx="16" cy="18" r="8" fill="#da3633" />
+    <text class="font-sans" x="16" y="22" fill="#ffffff" font-size="10" font-weight="700" text-anchor="middle">3</text>
+    <text class="font-sans" x="32" y="22" fill="#e6edf3" font-size="12" font-weight="600">CATCH DRIFT</text>
+    <text class="font-sans" x="280" y="22" fill="#f85149" font-size="11" font-weight="600" text-anchor="end">Trajectory Diff</text>
+
+    <!-- Terminal Code Block -->
+    <g transform="translate(12, 48)">
+      <rect class="c-inner-bg" x="0" y="0" width="270" height="318" rx="4" />
+      <rect class="c-border-subtle" x="0.5" y="0.5" width="269" height="317" rx="4" />
+
+      <g class="font-mono" transform="translate(12, 22)">
+        <!-- Failure header -->
+        <text x="0" y="0"><tspan class="c-red" font-weight="600">FAILED </tspan><tspan class="c-text">DivergenceError</tspan></text>
+        
+        <text x="0" y="24" class="c-amber">Agent trajectory changed:</text>
+
+        <!-- Expected / Actual context -->
+        <text x="0" y="52" class="c-dim">Expected:</text>
+        <text x="10" y="68" class="c-muted">1. model_request</text>
+        <text x="10" y="84" class="c-muted">2. tool: lookup_customer</text>
+        <text x="10" y="100" class="c-blue">3. tool: check_policy</text>
+
+        <text x="0" y="128" class="c-dim">Actual (prompt skipped check):</text>
+        <text x="10" y="144" class="c-muted">1. model_request</text>
+        <text x="10" y="160" class="c-muted">2. tool: lookup_customer</text>
+        <text x="10" y="176" class="c-red">3. tool: refund_customer</text>
+
+        <!-- Structural Diff Snippet -->
+        <g transform="translate(0, 192)">
+          <rect class="diff-del-bg" x="0" y="0" width="246" height="20" rx="3" />
+          <text class="diff-del-text" x="6" y="14">- 3. tool_call: check_policy</text>
+
+          <rect class="diff-add-bg" x="0" y="24" width="246" height="20" rx="3" />
+          <text class="diff-add-text" x="6" y="38">+ 3. tool_call: refund_customer</text>
+        </g>
+
+        <!-- Summary line -->
+        <line x1="0" y1="250" x2="246" y2="250" stroke="#21262d" stroke-width="1" />
+        <text x="0" y="272"><tspan class="c-red" font-weight="600">1 failed</tspan><tspan class="c-dim"> in 0.05s (caught in CI)</tspan></text>
+      </g>
+    </g>
   </g>
 </svg>

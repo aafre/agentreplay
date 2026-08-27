@@ -1,24 +1,23 @@
 <div align="center">
 
-# pytest-agentreplay
+# pytest-agentreplay 📼
 
-**Framework-agnostic regression testing for AI agents**
+### Framework-Agnostic Regression Testing for AI Agents
+
+**Record real model and tool interactions once, replay them offline in pytest with zero API calls, and detect behavioural regressions with structured trajectory diffs.**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/aafre/agentreplay/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/aafre/agentreplay/actions)
-[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-3776ab?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pytest-agentreplay/)
-[![PyPI version](https://img.shields.io/pypi/v/pytest-agentreplay?style=flat-square&color=blue)](https://pypi.org/project/pytest-agentreplay/)
+[![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13-3776ab?style=flat-square&logo=python&logoColor=white)](https://github.com/aafre/agentreplay)
+[![Version](https://img.shields.io/badge/version-v0.2.1-blue?style=flat-square&logo=pypi&logoColor=white)](https://github.com/aafre/agentreplay)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square)](LICENSE)
 [![Checked with mypy](https://img.shields.io/badge/mypy-strict-blue?style=flat-square)](https://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat-square)](https://github.com/astral-sh/ruff)
 
-Record real model and tool interactions once, replay them offline in pytest with zero API calls, and detect behavioural regressions with structured trajectory diffs.
-
-[Overview](#overview) • [Demo](#demo) • [Examples](#real-world-examples) • [Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [Cassette Format](#cassette-format) • [CLI & Fixture Reference](#cli--fixture-reference) • [Development](#development)
+[Overview](#overview) • [Quick Start](#quick-start) • [Supported Frameworks](#supported-frameworks--adapters) • [Examples](#real-world-examples) • [How It Works](#how-it-works) • [Cassette Format](#cassette-format) • [CLI Reference](#cli--fixture-reference)
 
 </div>
 
 ---
-
-## Demo
 
 <div align="center">
   <img src="assets/demo.svg" alt="pytest-agentreplay record, replay, and trajectory diff lifecycle" width="100%" />
@@ -357,27 +356,14 @@ def execute_payment(account_id: str, amount: float) -> dict:
 
 ## How It Works
 
-```
-┌────────────────────────────────────────────────────────┐
-│                      Agent Test                        │
-└───────────────────────────┬────────────────────────────┘
-                            │
-              ┌─────────────┴─────────────┐
-              ▼                           ▼
-      [Record Mode]               [Replay Mode]
-              │                           │
-     Live Model & Tools           Cassette JSONL File
-              │                           │
-  Intercepts via Capability       Intercepts via Hooks:
-    • Model Requests/Responses      • SkipModelRequest
-    • Tool Calls/Results            • SkipToolExecution
-              │                           │
-              ▼                           ▼
-   Saves Canonical JSONL         Zero Network / API Calls
-```
+<div align="center">
+  <img src="assets/architecture.svg" alt="pytest-agentreplay record and replay architecture" width="100%" />
+</div>
 
-- **Record Mode**: Intercepts model requests, model responses, and tool executions via PydanticAI's `AbstractCapability` hooks. Deep-copies all arguments and results to prevent mutation side-effects.
-- **Replay Mode**: Uses PydanticAI's `SkipModelRequest` to return recorded responses without model invocations, and `SkipToolExecution` to substitute recorded tool outputs.
+<br>
+
+- **Record Mode**: Intercepts model requests, model responses, and tool executions via capability hooks. Deep-copies all arguments and results to prevent mutation side-effects.
+- **Replay Mode**: Uses `SkipModelRequest` to return recorded responses without model invocations, and `SkipToolExecution` to substitute recorded tool outputs.
 - **Divergence Engine**: Tracks execution position with a stateful cursor. Rejects mismatches in event kinds, unexpected tool names, altered arguments, cassette exhaustion, and unconsumed leftover events.
 
 ---

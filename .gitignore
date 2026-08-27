@@ -48,3 +48,9 @@ Thumbs.db
 # Planning & Internal Notes
 .plans/
 .plan/
+
+# Impeccable
+.impeccable/
+PRODUCT.md
+DESIGN.md
+

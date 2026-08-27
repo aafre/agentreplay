@@ -1,6 +1,6 @@
 <div align="center">
 
-# agentreplay
+# pytest-agentreplay
 
 **Framework-agnostic regression testing for AI agents**
 
@@ -33,14 +33,14 @@ Testing AI agents in continuous integration is often painful:
 - **Traditional mocks are brittle** and easily miss subtle agent drifts (such as skipping a verification tool or altering argument payloads).
 - **Raw snapshot tests generate massive, noisy JSON diffs** cluttered with timestamps, request IDs, and non-deterministic tokens.
 
-`agentreplay` brings deterministic VCR-style testing to AI agents:
+`pytest-agentreplay` brings deterministic VCR-style testing to AI agents:
 
 1. **Record once** against live models and tools during local test development.
 2. **Replay offline** in CI with zero network and zero model API calls.
 3. **Catch behavioural drift** with step-by-step trajectory diffs whenever tools, arguments, or execution sequences change.
 
 > [!NOTE]
-> `agentreplay` is a testing tool, not an agent runtime or orchestration system. You don't need to rewrite your agent or replace your framework runtime.
+> `pytest-agentreplay` is a testing tool, not an agent runtime or orchestration system. You don't need to rewrite your agent or replace your framework runtime.
 
 ---
 

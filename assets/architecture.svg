@@ -13,7 +13,6 @@
       .node-bg { fill: #161b22; stroke: #30363d; stroke-width: 1px; }
       .node-card { fill: #0d1117; stroke: #30363d; stroke-width: 1px; }
       .conn-line { stroke: #30363d; stroke-width: 1.5px; fill: none; }
-      .conn-line-active { stroke: #58a6ff; stroke-width: 1.5px; fill: none; }
       
       .t-title { fill: #f0f6fc; font-weight: 600; font-size: 13px; }
       .t-subtitle { fill: #8b949e; font-size: 11.5px; }
@@ -22,6 +21,56 @@
       .t-green { fill: #3fb950; font-size: 11px; }
       .t-blue { fill: #58a6ff; font-size: 11px; }
       .t-red { fill: #f85149; font-size: 11px; }
+
+      /* Dynamic Animations */
+      @keyframes dashFlow {
+        from { stroke-dashoffset: 24; }
+        to { stroke-dashoffset: 0; }
+      }
+      .flow-record {
+        stroke: #58a6ff;
+        stroke-width: 2px;
+        stroke-dasharray: 6, 6;
+        fill: none;
+        animation: dashFlow 1.2s linear infinite;
+      }
+      .flow-replay {
+        stroke: #3fb950;
+        stroke-width: 2px;
+        stroke-dasharray: 6, 6;
+        fill: none;
+        animation: dashFlow 1.2s linear infinite;
+      }
+      .flow-cassette {
+        stroke: #8b949e;
+        stroke-width: 1.5px;
+        stroke-dasharray: 4, 4;
+        fill: none;
+        animation: dashFlow 1.8s linear infinite;
+      }
+
+      @keyframes pulseGlow {
+        0%, 100% { filter: drop-shadow(0 0 5px rgba(88, 166, 255, 0.35)); }
+        50% { filter: none; }
+      }
+      .glow-record {
+        animation: pulseGlow 3s ease-in-out infinite;
+      }
+
+      @keyframes pulseGreenGlow {
+        0%, 100% { filter: drop-shadow(0 0 5px rgba(63, 185, 80, 0.35)); }
+        50% { filter: none; }
+      }
+      .glow-replay {
+        animation: pulseGreenGlow 3s ease-in-out infinite;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .flow-record, .flow-replay, .flow-cassette, .glow-record, .glow-replay {
+          animation: none !important;
+          stroke-dasharray: none !important;
+        }
+      }
     ]]></style>
 
     <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -45,16 +94,20 @@
     <text class="font-mono t-dim" x="140" y="42" text-anchor="middle">test_agent.py (fixture: agentreplay)</text>
   </g>
 
-  <!-- Connectors from Root to Branches -->
-  <path d="M 360 78 L 360 110 L 220 110 L 220 134" class="conn-line" marker-end="url(#arrow-blue)" />
-  <path d="M 500 78 L 500 110 L 640 110 L 640 134" class="conn-line" marker-end="url(#arrow-green)" />
+  <!-- Base connector lines -->
+  <path d="M 360 78 L 360 110 L 220 110 L 220 134" class="conn-line" />
+  <path d="M 500 78 L 500 110 L 640 110 L 640 134" class="conn-line" />
+
+  <!-- Animated flow lines -->
+  <path d="M 360 78 L 360 110 L 220 110 L 220 134" class="flow-record" marker-end="url(#arrow-blue)" />
+  <path d="M 500 78 L 500 110 L 640 110 L 640 134" class="flow-replay" marker-end="url(#arrow-green)" />
 
   <!-- Mode Selector Badges on Connector Line -->
-  <g transform="translate(145, 98)">
+  <g transform="translate(145, 98)" class="glow-record">
     <rect width="150" height="22" rx="4" fill="#0d1117" stroke="#1f6feb" stroke-width="1" />
     <text class="font-mono t-blue" x="75" y="15" text-anchor="middle">--agentreplay=record</text>
   </g>
-  <g transform="translate(565, 98)">
+  <g transform="translate(565, 98)" class="glow-replay">
     <rect width="150" height="22" rx="4" fill="#0d1117" stroke="#238636" stroke-width="1" />
     <text class="font-mono t-green" x="75" y="15" text-anchor="middle">--agentreplay=replay</text>
   </g>
@@ -109,8 +162,8 @@
   </g>
 
   <!-- Flow to Cassette Storage Node at Bottom -->
-  <path d="M 220 326 L 220 348 L 360 348" class="conn-line" marker-end="url(#arrow)" />
-  <path d="M 640 326 L 640 348 L 500 348" class="conn-line" marker-end="url(#arrow)" />
+  <path d="M 220 326 L 220 348 L 346 348" class="flow-cassette" marker-end="url(#arrow)" />
+  <path d="M 640 326 L 640 348 L 514 348" class="flow-cassette" marker-end="url(#arrow)" />
 
   <!-- Center Shared Cassette Artifact Node -->
   <g transform="translate(350, 330)">

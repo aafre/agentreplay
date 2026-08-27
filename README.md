@@ -8,12 +8,12 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/aafre/agentreplay/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/aafre/agentreplay/actions)
 [![Python Version](https://img.shields.io/pypi/pyversions/pytest-agentreplay?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pytest-agentreplay/)
-[![PyPI version](https://img.shields.io/pypi/v/pytest-agentreplay?style=flat-square&color=blue)](https://pypi.org/project/pytest-agentreplay/)
+[![PyPI version](https://img.shields.io/pypi/v/pytest-agentreplay?style=flat-square&color=blue&v=0.2.1)](https://pypi.org/project/pytest-agentreplay/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green?style=flat-square)](LICENSE)
 [![Checked with mypy](https://img.shields.io/badge/mypy-strict-blue?style=flat-square)](https://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat-square)](https://github.com/astral-sh/ruff)
 
-[Overview](#overview) • [Quick Start](#quick-start) • [Supported Frameworks](#supported-frameworks--adapters) • [Examples](#real-world-examples) • [How It Works](#how-it-works) • [Cassette Format](#cassette-format) • [CLI Reference](#cli--fixture-reference)
+[Quick Start](#quick-start) • [Supported Frameworks](#supported-frameworks--adapters) • [How It Works](#how-it-works) • [Cassette Format](#cassette-format) • [Examples](#real-world-examples) • [CLI Reference](#cli--fixture-reference)
 
 </div>
 
@@ -25,84 +25,11 @@
 
 <br>
 
-<details open>
-<summary><b>🎬 Step-by-Step Interactive Walkthrough (Click to expand / collapse)</b></summary>
-
-### 1️⃣ Record Mode — Capture Real Agent Trajectories Once
-Run pytest with `--agentreplay=record` during local development or when authoring tests. `pytest-agentreplay` non-invasively intercepts model requests, responses, and tool executions, saving a canonical Git-diffable `.jsonl` cassette:
-
-```bash
-pytest --agentreplay=record tests/test_refund.py
-```
-```text
-RECORD  tests/cassettes/test_refund/test_refund_flow.jsonl
-  ✓ Intercepted via PydanticAI capability hooks
-  ✓ 2 model request/response turns captured
-  ✓ 3 tool calls recorded (lookup_customer, check_refund_policy, refund_customer)
-  ✓ Canonical JSONL cassette saved (format_version=1)
-
-tests/test_refund.py::test_refund_flow PASSED [100%]
-====================== 1 passed in 2.45s (recorded to disk) ======================
-```
-
----
-
-### 2️⃣ Fast Replay Mode — 100% Offline CI in Milliseconds
-Run with `--agentreplay=replay` in CI pipelines. Zero network calls, zero API token costs, and 100% deterministic execution:
-
-```bash
-pytest --agentreplay=replay tests/test_refund.py
-```
-```text
-REPLAY  tests/cassettes/test_refund/test_refund_flow.jsonl
-  ✓ ZERO live model API calls (skipped via SkipModelRequest)
-  ✓ ZERO tool/network execution (skipped via SkipToolExecution)
-  ✓ Replay position cursor matched all 7 cassette events
-  ✓ 100% deterministic test execution
-
-tests/test_refund.py::test_refund_flow PASSED [100%]
-====================== 1 passed in 0.04s (60x faster / zero tokens used) ======================
-```
-
----
-
-### 3️⃣ Trajectory Diff — Catch Subtle Behavioural Regressions
-Suppose someone edits the agent prompt or upgrades model weights, and the agent now accidentally skips `check_refund_policy` and immediately refunds money. `agentreplay` stops execution and pinpoints the exact divergence:
-
-```bash
-pytest --agentreplay=replay tests/test_refund.py
-```
-```text
-FAILED tests/test_refund.py::test_refund_flow - DivergenceError:
-
-Agent trajectory changed
-
-Expected:
-  1. model_request
-  2. tool_call: lookup_customer(id='123')
-  3. tool_call: check_refund_policy(tier='gold')
-  4. tool_call: refund_customer(amount=39)
-  5. model_response → "Refund processed."
-
-Actual:
-  1. model_request
-  2. tool_call: lookup_customer(id='123')
-  3. tool_call: refund_customer(amount=39)
-
-Divergence at step 3:
-  - tool_call: check_refund_policy(tier='gold')
-  + tool_call: refund_customer(amount=39)
-====================== 1 failed in 0.05s ======================
-```
-</details>
-
-<br>
-
 | Capability | Live LLMs in CI | Traditional Mocks | `pytest-agentreplay` |
 |---|:---:|:---:|:---:|
 | **CI Execution Speed** | 🐌 15s – 60s+ | ⚡ < 1s | ⚡ **< 0.05s (60x faster)** |
 | **API Costs & Rate Limits** | 💸 High & Flaky | 🆓 Zero | 🆓 **Zero ($0.00 tokens)** |
-| **Catches Prompt Drift** | ❌ Flaky / Stochastic | ❌ No (hardcoded return) | ✅ **Yes (Trajectory Diffs)** |
+| **Catches Prompt Drift** | ❌ Stochastic | ❌ No (hardcoded return) | ✅ **Yes (Trajectory Diffs)** |
 | **Detects Tool Bypass** | ⚠️ Only if output fails | ❌ Misses sequence order | ✅ **Exact Step Divergence** |
 | **Maintenance Overhead** | ❌ Endless triage | ❌ Tedious mock writing | ✅ **1-command cassette update** |
 
@@ -110,7 +37,7 @@ Divergence at step 3:
 
 ## Overview
 
-Testing AI agents in continuous integration is often painful:
+Testing AI agents in CI/CD presents a familiar dilemma:
 - **Live LLM calls in CI are slow, expensive, and flaky.**
 - **Traditional mocks are brittle** and easily miss subtle agent drifts (such as skipping a verification tool or altering argument payloads).
 - **Raw snapshot tests generate massive, noisy JSON diffs** cluttered with timestamps, request IDs, and non-deterministic tokens.
@@ -122,24 +49,11 @@ Testing AI agents in continuous integration is often painful:
 3. **Catch behavioural drift** with step-by-step trajectory diffs whenever tools, arguments, or execution sequences change.
 
 > [!NOTE]
-> `pytest-agentreplay` is a testing tool, not an agent runtime or orchestration system. You don't need to rewrite your agent or replace your framework runtime.
-
----
-
-## Features
-
-- ⚡ **Zero-API Replay**: Substitutes model responses and tool executions offline — test suites execute in milliseconds.
-- 🔍 **Structural Trajectory Diffs**: Highlights the exact step where an agent diverged instead of dumping raw JSON walls.
-- 🎯 **Non-Invasive Adapter**: Integrates with PydanticAI via public capability hooks without monkey-patching HTTP clients.
-- 🛡️ **No Silent Fallback**: Replay never secretly falls back to live network calls; cassette exhaustion and unexpected tool calls fail loudly.
-- 📦 **Git-Friendly Cassettes**: Canonical JSONL serialization (sorted keys, compact separators) produces byte-identical files across operating systems.
-- 🧪 **Pytest-Native**: Integrated `--agentreplay` CLI option and test fixture for seamless workflow switching.
+> `pytest-agentreplay` is a testing tool, not an agent framework or runtime. You don't need to rewrite your agent or replace your framework runtime.
 
 ---
 
 ## Installation
-
-Install `pytest-agentreplay` using `uv` or `pip`:
 
 ```bash
 # Core package
@@ -150,7 +64,7 @@ uv add pytest-agentreplay[pydantic-ai]  # PydanticAI
 uv add pytest-agentreplay[openai]       # OpenAI Python SDK
 uv add pytest-agentreplay[anthropic]    # Anthropic Python SDK
 
-# Install all adapters
+# All adapters
 uv add pytest-agentreplay[all]
 ```
 
@@ -158,9 +72,9 @@ uv add pytest-agentreplay[all]
 
 ## Quick Start
 
-### 1. Using the pytest Fixture (Recommended)
+### 1. Add the `agentreplay` Fixture to Your Test
 
-Add the `agentreplay` fixture to your existing test function. The cassette path is automatically derived from the test module and function name:
+The cassette path is automatically derived from the test module and function name:
 
 ```python
 from your_app import support_agent
@@ -173,103 +87,51 @@ def test_refund_flow(agentreplay):
     assert "refund" in result.output.lower()
 ```
 
-#### Step 1: Record Real Interactions
-Run pytest with `--agentreplay=record` to capture live model and tool events into a cassette:
+### 2. Record Once Locally
+
+Run pytest with `--agentreplay=record` to capture live model and tool events into a canonical JSONL cassette:
 
 ```bash
 pytest --agentreplay=record tests/test_refund.py
 ```
-```
+
+```text
 RECORD  tests/cassettes/test_refund/test_refund_flow.jsonl
-✓ model interactions recorded
-✓ tool interactions recorded
+  ✓ Intercepted via PydanticAI capability hooks
+  ✓ 2 model request/response turns captured
+  ✓ 2 tool calls recorded (lookup_customer, check_policy)
+  ✓ Canonical JSONL cassette saved (format_version=1)
+
+1 passed in 2.14s (recorded to disk)
 ```
 
-#### Step 2: Replay Offline in CI
-Run with `--agentreplay=replay` to run tests entirely offline:
+### 3. Replay Offline in CI
+
+Run with `--agentreplay=replay` to execute the suite completely offline in milliseconds:
 
 ```bash
 pytest --agentreplay=replay tests/test_refund.py
 ```
-```
+
+```text
 REPLAY  tests/cassettes/test_refund/test_refund_flow.jsonl
-✓ zero model API calls
-✓ zero network
-✓ deterministic
+  ✓ Zero model API calls (skipped via SkipModelRequest)
+  ✓ Zero tool/network calls (skipped via SkipToolExecution)
+  ✓ 100% deterministic test execution
+
+1 passed in 0.04s ($0.00 tokens used)
 ```
 
 > [!TIP]
-> Running `pytest` without the `--agentreplay` flag executes tests normally without recording or intercepting interactions.
-
----
-
-### 2. Programmatic Usage
-
-You can also control recording and replaying explicitly in code without pytest CLI flags:
-
-```python
-import agentreplay
-from your_app import support_agent
-
-
-def test_custom_refund():
-    result = support_agent.run_sync(
-        "Refund order 123",
-        capabilities=[
-            agentreplay.pydantic_ai(
-                mode="replay",  # or "record"
-                cassette_path="tests/cassettes/custom_refund.jsonl",
-            )
-        ],
-    )
-    assert "refund" in result.output.lower()
-```
-
-<details>
-<summary><b>Interactive Live Example (Click to expand)</b></summary>
-
-Here is a complete, self-contained example you can run immediately without API keys using PydanticAI's built-in `TestModel`:
-
-```python
-from pathlib import Path
-from pydantic_ai import Agent
-from pydantic_ai.models.test import TestModel
-from pydantic_ai.tools import RunContext
-import agentreplay
-
-
-# 1. Define your agent & tools
-def lookup_customer(ctx: RunContext[None], customer_id: str) -> str:
-    return f"Customer {customer_id}: Alice (tier=gold)"
-
-
-support_agent = Agent(
-    TestModel(call_tools=["lookup_customer"]),
-    tools=[lookup_customer],
-)
-
-cassette = Path("test_refund.jsonl")
-
-# 2. Record: live interaction captured to JSONL
-cap_record = agentreplay.pydantic_ai(mode="record", cassette_path=cassette)
-record_result = support_agent.run_sync("Find customer 123", capabilities=[cap_record])
-print("Recorded output:", record_result.output)
-
-# 3. Replay: 100% offline, zero model/tool execution
-cap_replay = agentreplay.pydantic_ai(mode="replay", cassette_path=cassette)
-replay_result = support_agent.run_sync("Find customer 123", capabilities=[cap_replay])
-print("Replayed output:", replay_result.output)
-assert record_result.output == replay_result.output
-```
-</details>
+> Running `pytest` without the `--agentreplay` flag executes tests normally without intercepting interactions.
 
 ---
 
 ## Behavioural Trajectory Diffs
 
-When an agent changes its decision path (e.g. prompt changes, tool parameter updates, or model upgrade drifts), `agentreplay` provides a clear, numbered trajectory diff:
+When an agent changes its decision path (e.g. prompt edits, tool parameter changes, or model upgrade drifts), `pytest-agentreplay` stops execution and pinpoints the exact divergence:
 
-```
+```text
 FAILED tests/test_refund.py::test_refund_flow - DivergenceError:
 
 Agent trajectory changed
@@ -290,20 +152,6 @@ Divergence at step 3:
   - tool_call: check_refund_policy(tier='gold')
   + tool_call: refund_customer(amount=39)
 ```
-
----
-
-## Real-World Examples
-
-Explore fully functional agent examples in the [`examples/`](examples) directory:
-
-| Example | Scenario | Why Replay Matters |
-|---|---|---|
-| **[E-Commerce Refund Agent](examples/ecommerce_support/)** | Multi-step agent with fraud detection, tier calculations, and payment gateway calls. | Catches silent regressions where prompt changes bypass fraud checks before issuing refunds. |
-| **[SQL Data Analyst Agent](examples/sql_analyst/)** | Natural-language-to-SQL agent with schema discovery and read-only query guardrails. | Tests query planning and schema lookup trajectories in CI without spinning up live database replicas. |
-| **[DevOps Incident Triage Agent](examples/devops_incident/)** | Operations agent parsing cluster logs, evaluating change policy, and executing remediations. | Prevents unsafe direct restarts by ensuring diagnostic logs & policy checks are never bypassed. |
-| **[Vanilla OpenAI Agent Loop](examples/raw_openai_agent/)** | Custom multi-turn tool-calling loop built directly with the official OpenAI SDK. | Enables teams building custom agent loops without frameworks to record and replay trajectories. |
-| **[Customer Support Agent](examples/support_agent.py)** | Standalone customer tier lookup and policy verification demo. | Minimal single-file reference for quick onboarding. |
 
 ---
 
@@ -362,9 +210,9 @@ def execute_payment(account_id: str, amount: float) -> dict:
 
 <br>
 
-- **Record Mode**: Intercepts model requests, model responses, and tool executions via capability hooks. Deep-copies all arguments and results to prevent mutation side-effects.
+- **Record Mode**: Intercepts model requests, model responses, and tool executions via framework hooks. Deep-copies all arguments and results to prevent mutable side-effects.
 - **Replay Mode**: Uses `SkipModelRequest` to return recorded responses without model invocations, and `SkipToolExecution` to substitute recorded tool outputs.
-- **Divergence Engine**: Tracks execution position with a stateful cursor. Rejects mismatches in event kinds, unexpected tool names, altered arguments, cassette exhaustion, and unconsumed leftover events.
+- **Divergence Engine**: Tracks execution position with a stateful cursor. Flags mismatches in event kinds, unexpected tool names, altered arguments, cassette exhaustion, and unconsumed leftover events.
 
 ---
 
@@ -388,6 +236,20 @@ Subsequent lines contain canonical `TraceEvent` records:
 
 > [!IMPORTANT]
 > Serialization is deterministic: dictionary keys are sorted, compact separators are enforced, and encoding is UTF-8. Logically identical traces produce byte-identical files across platforms.
+
+---
+
+## Real-World Examples
+
+Explore fully functional agent examples in the [`examples/`](examples) directory:
+
+| Example | Scenario | Why Replay Matters |
+|---|---|---|
+| **[E-Commerce Refund Agent](examples/ecommerce_support/)** | Multi-step agent with fraud detection, tier calculations, and payment gateway calls. | Catches silent regressions where prompt changes bypass fraud checks before issuing refunds. |
+| **[SQL Data Analyst Agent](examples/sql_analyst/)** | Natural-language-to-SQL agent with schema discovery and read-only query guardrails. | Tests query planning and schema lookup trajectories in CI without spinning up live database replicas. |
+| **[DevOps Incident Triage Agent](examples/devops_incident/)** | Operations agent parsing cluster logs, evaluating change policy, and executing remediations. | Prevents unsafe direct restarts by ensuring diagnostic logs & policy checks are never bypassed. |
+| **[Vanilla OpenAI Agent Loop](examples/raw_openai_agent/)** | Custom multi-turn tool-calling loop built directly with the official OpenAI SDK. | Enables teams building custom agent loops without frameworks to record and replay trajectories. |
+| **[Customer Support Agent](examples/support_agent.py)** | Standalone customer tier lookup and policy verification demo. | Minimal single-file reference for quick onboarding. |
 
 ---
 
